@@ -1,0 +1,16 @@
+#Q13
+Using the already defined RBF SVC model `m`, run a grid search on the parameters C and gamma, for values [0.01, 0.1, 1, 10]. The grid search should find the model that best optimizes for recall. How much better is the recall of this model than the precision? (Compute recall - precision to 3 decimal places)
+
+(Use y_test and X_test to compute precision and recall.)
+
+print(m)
+grid_values = {'C':[0.01, 0.1, 1, 10],'gamma': [0.01, 0.1, 1, 10]}
+
+grid_clf_recall = GridSearchCV(m, param_grid = grid_values, scoring = 'recall')
+grid_clf_recall.fit(X_train, y_train)
+y_pred = grid_clf_recall.predict(X_test)
+
+print('Grid best gamma: ', grid_clf_recall.best_params_)
+print('Grid best score (recall): ', grid_clf_recall.best_score_)
+print(precision_score(y_test, y_pred))
+print(recall_score(y_test,y_pred)-precision_score(y_test, y_pred))
