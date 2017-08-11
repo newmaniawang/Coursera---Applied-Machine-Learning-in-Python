@@ -1,7 +1,10 @@
-#Q13
-Using the already defined RBF SVC model `m`, run a grid search on the parameters C and gamma, for values [0.01, 0.1, 1, 10]. The grid search should find the model that best optimizes for recall. How much better is the recall of this model than the precision? (Compute recall - precision to 3 decimal places)
-
+#Q13#
+Using the already defined RBF SVC model `m`, run a grid search on the parameters C and gamma, for values [0.01, 0.1, 1, 10]. 
+The grid search should find the model that best optimizes for recall. How much better is the recall of this model than the precision?
+(Compute recall - precision to 3 decimal places)
 (Use y_test and X_test to compute precision and recall.)
+
+#Code:
 
 print(m)
 grid_values = {'C':[0.01, 0.1, 1, 10],'gamma': [0.01, 0.1, 1, 10]}
@@ -14,3 +17,42 @@ print('Grid best gamma: ', grid_clf_recall.best_params_)
 print('Grid best score (recall): ', grid_clf_recall.best_score_)
 print(precision_score(y_test, y_pred))
 print(recall_score(y_test,y_pred)-precision_score(y_test, y_pred))
+
+#Q8.Using the fitted model `m` what is the micro precision score?
+(Use y_test and X_test to compute the precision score.)
+
+print(m)
+svm = m.fit(X_train, y_train)
+svm_pred = svm.predict(X_test)
+precision_score(y_test, svm_pred, average = 'micro')
+
+
+#Q5
+Using the fitted model `m` create a precision-recall curve to answer the following question:
+For the fitted model `m`, approximately what precision can we expect for a recall of 0.8?
+(Use y_test and X_test to compute the precision-recall curve. If you wish to view a plot, you can use `plt.show()` )
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import precision_recall_curve
+
+print(m)
+clf=m.fit(X_train,y_train)
+y_scores = clf.decision_function(X_test)
+precision, recall, thresholds = precision_recall_curve(y_test, y_scores)
+closest_zero = np.argmin(np.abs(thresholds))
+closest_zero_p = precision[closest_zero]
+closest_zero_r = recall[closest_zero]
+
+
+plt.figure()
+plt.xlim([0.0, 1.01])
+plt.ylim([0.0, 1.01])
+plt.title ("Precision-recall curve: SVC, class_weight = 'balanced'")
+plt.plot(precision, recall, label = 'Precision-Recall Curve')
+plt.plot(closest_zero_p, closest_zero_r, 'o', markersize=12, fillstyle='none', c='r', mew=3)
+plt.xlabel('Precision', fontsize=16)
+plt.ylabel('Recall', fontsize=16)
+plt.axes().set_aspect('equal')
+plt.show()
+print('At zero threshold, precision: {:.2f}, recall: {:.2f}'
+      .format(closest_zero_p, closest_zero_r))
